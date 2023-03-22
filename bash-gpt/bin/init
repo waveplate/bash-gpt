@@ -1,0 +1,1 @@
+bind -x "\"\C-$BASHGPT_SHORTCUT_KEY\":\". $BASHGPT_PREFIX/bash-gpt/bin/gpt\""

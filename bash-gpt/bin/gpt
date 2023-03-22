@@ -1,0 +1,73 @@
+#!/bin/bash
+
+# check if template exists
+if [[ ! -f $BASHGPT_PREFIX/bash-gpt/templates/$BASHGPT_MODEL ]]
+then
+	echo "ERROR: template $BASHGPT_MODEL not found in $BASHGPT_PREFIX/bash-gpt/templates"
+	return
+fi
+
+OUTPUT=""
+COMMAND=""
+
+# escape quotes
+READLINE_LINE=$(echo $READLINE_LINE | sed -E 's/"/\\"/g')
+
+# perform prompt substitution
+BASHGPT_PROMPT="${BASHGPT_TEMPLATE//\{\{TEXT\}\}/$READLINE_LINE}"
+
+# load template
+. $BASHGPT_PREFIX/bash-gpt/templates/$BASHGPT_MODEL
+
+redraw_current_line() {
+  local current_line="$READLINE_LINE"
+  local current_point="$READLINE_POINT"
+
+  READLINE_LINE=$COMMAND
+  READLINE_POINT=${#READLINE_LINE}
+}
+
+parse_code() {
+	# check if json contains text or content property
+	if [[ $JSON == *"\"text\":\""*"\""* ]] || [[ $JSON == *"\"content\":\""*"\""* ]]
+	then
+		# parse out text or content property
+		OUTPUT=$(echo $JSON | awk -F'"(content|text)":"(\\\\n)*' '{print $2}' | grep -Po '^(.+?)(?<!\\)"' | sed -E 's/"$//' | sed -E 's/\\"/"/g')
+
+		# check if output contains code block
+		if [[ $OUTPUT == *"\`\`\`"* ]]
+		then
+			# parse out generated command
+			COMMAND=$(echo $OUTPUT | awk -F'```' ' {print $2}')
+			COMMAND=$(echo -e $COMMAND | sed -E 's/^(bash$|#.*$)//g' | awk '/./,EOF{print}')
+		fi
+	fi
+}
+
+get_command() {
+	JSON=$(curl -s $BASHGPT_ENDPOINT \
+	  -H "Content-Type: application/json" \
+	  -H "Authorization: Bearer $BASHGPT_OPENAI_KEY" \
+	  -d "$BASHGPT_DATA")
+	parse_code
+}
+
+get_command
+
+if [[ -z "$COMMAND" ]]
+then
+	if [[ -z "$OUTPUT" || "$OUTPUT" == "null" ]]
+	then
+		if [[ -z "$JSON" ]]
+		then
+			echo "ERROR: received no response from API"
+		else
+			echo "ERROR:"
+			echo $JSON
+		fi
+	else
+		echo -e "ERROR: $OUTPUT"
+	fi
+else
+	redraw_current_line
+fi

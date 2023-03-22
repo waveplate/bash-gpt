@@ -1,0 +1,5 @@
+BASHGPT_ENDPOINT="https://api.openai.com/v1/engines/code-cushman-001/completions"
+BASHGPT_DATA="{	\"prompt\": \"$BASHGPT_PROMPT\",
+	\"temperature\": $BASHGPT_TEMPERATURE,
+        \"max_tokens\": $BASHGPT_MAX_TOKENS }"
+

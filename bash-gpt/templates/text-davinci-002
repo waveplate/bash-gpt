@@ -1,0 +1,6 @@
+BASHGPT_ENDPOINT="https://api.openai.com/v1/completions"
+BASHGPT_DATA="{ \"model\": \"$BASHGPT_MODEL\",
+	\"prompt\": \"$BASHGPT_PROMPT\",
+	\"temperature\": $BASHGPT_TEMPERATURE,
+        \"max_tokens\": $BASHGPT_MAX_TOKENS }"
+
