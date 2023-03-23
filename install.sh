@@ -26,18 +26,18 @@ BASHGPT_TEMPLATE='here is the bash command in a code block: {{TEXT}}'
 
 # create variables from arguments
 for (( i=1; i<=$#; i++ )); do
-  eval ${KEYS[$i-1]}='${!i}'
+    eval ${KEYS[$i-1]}='${!i}'
 done
 
-# check if prefix is a directory
-if [ ! -d $BASHGPT_PREFIX ]; then
-    echo "Error: $BASHGPT_PREFIX is not a directory"
+# check if prefix is a directory and is writable
+if [ ! -d $BASHGPT_PREFIX ] || [ ! -w $BASHGPT_PREFIX ]; then
+    echo "Error: $BASHGPT_PREFIX is not a directory or not writable (did you forget to use sudo?)"
     exit 1
 fi
 
-# check if BASHRC is a file
-if [ ! -f $BASHGPT_BASHRC ]; then
-    echo "Error: $2 is not a file"
+# check if BASHRC is a file and is writable
+if [ ! -f $BASHGPT_BASHRC ] || [ ! -w $BASHGPT_BASHRC ]; then
+    echo "Error: $BASHGPT_BASHRC is not a file or not writable"
     exit 1
 fi
 
@@ -49,19 +49,43 @@ if [ ${#BASHGPT_SHORTCUT_KEY} -ne 1 ]; then
 fi
 
 cp -r bash-gpt $BASHGPT_PREFIX
+echo "* copied bash-gpt to $BASHGPT_PREFIX"
 
-# remove existing source
-sed -Ei '/^\. .+\/bash-gpt\/bin\/init$/d' $BASHGPT_BASHRC
+REMOVED=()
 
 # remove all existing entries
 for KEY in ${KEYS[@]}; do
-  sed -Ei "/^export $KEY=.+$/d" $BASHGPT_BASHRC
+    # check if entry exists
+    if grep -qE "^export $KEY=.+$" $BASHGPT_BASHRC; then
+        REMOVED+=($KEY)
+        sed -Ei "/^export $KEY=.+$/d" $BASHGPT_BASHRC
+    fi
 done
 
 # add new entries
 for KEY in ${KEYS[@]}; do
-  echo "export $KEY='${!KEY}'" >> $BASHGPT_BASHRC
+    # escape single quotes in ${!KEY}
+    VALUE=$(echo ${!KEY} | sed "s/'/\\\'/g")
+    # add entry to BASHRC
+    echo "export $KEY='$VALUE'" >> $BASHGPT_BASHRC
+
+    # check if KEY is in the REMOVED array
+    if [[ " ${REMOVED[@]} " =~ " ${KEY} " ]]; then
+        echo "* updated $KEY export in $BASHGPT_BASHRC"
+    else
+        echo "* added $KEY export to $BASHGPT_BASHRC"
+    fi
 done
+
+# check if source exists in BASHRC
+if grep -qE "^\. .+\/bash-gpt\/bin\/init$" $BASHGPT_BASHRC; then
+    echo "* updated bash-gpt source in $BASHGPT_BASHRC"
+else
+    echo "* added bash-gpt source to $BASHGPT_BASHRC"
+fi
+
+# remove existing source if present
+sed -Ei '/^\. .+\/bash-gpt\/bin\/init$/d' $BASHGPT_BASHRC
 
 # add new source
 echo ". $BASHGPT_PREFIX/bash-gpt/bin/init" >> $BASHGPT_BASHRC
