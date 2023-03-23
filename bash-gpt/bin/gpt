@@ -20,11 +20,11 @@ BASHGPT_PROMPT="${BASHGPT_TEMPLATE//\{\{TEXT\}\}/$READLINE_LINE}"
 . $BASHGPT_PREFIX/bash-gpt/templates/$BASHGPT_MODEL
 
 redraw_current_line() {
-  local current_line="$READLINE_LINE"
-  local current_point="$READLINE_POINT"
+	local current_line="$READLINE_LINE"
+	local current_point="$READLINE_POINT"
 
-  READLINE_LINE=$COMMAND
-  READLINE_POINT=${#READLINE_LINE}
+	READLINE_LINE=$COMMAND
+	READLINE_POINT=${#READLINE_LINE}
 }
 
 parse_code() {
