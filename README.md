@@ -4,6 +4,15 @@
 # quick install
 `sudo ./install.sh /usr/local ~/.bashrc " " <YOUR_OPENAI_API_KEY>`
 
+or
+
+`./install.sh ~ ~/.bashrc " " <YOUR_OPENAI_API_KEY>`
+
+# uninstall
+`./uninstall.sh [BASHRC]`
+
+if `BASHRC` is not specific, it will attempt to uninstall using the `BASHRC` in your `BASHGPT_BASHRC` environment variable
+
 # example #1
 once installed, open a new shell and type a natural language command
 
