@@ -11,7 +11,7 @@ or
 # uninstall
 `./uninstall.sh [BASHRC]`
 
-if `BASHRC` is not specific, it will attempt to uninstall using the `BASHRC` in your `BASHGPT_BASHRC` environment variable
+if `BASHRC` is not specified, it will attempt to uninstall using the `BASHRC` in your `BASHGPT_BASHRC` environment variable
 
 # example #1
 once installed, open a new shell and type a natural language command
@@ -41,7 +41,7 @@ flip my_video.mp4 vertically, scale it to 720p and save it as my_output.mp4 | `f
 | --- | --- | --- |
 | PREFIX | The path to install bash-gpt | `/usr/local`
 | BASHRC | The path to your `.bashrc` file | `~/.bashrc`
-| SHORTCUT_KEY | The key to trigger bash-gpt (CTRL-KEY)| `x`
+| SHORTCUT_KEY | The key to trigger bash-gpt (CTRL-KEY)| `" "`
 | OPENAI_KEY | The key to access OpenAI API | `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`
 | MODEL | The model to use | `text-davinci-003`
 | TEMPERATURE | The temperature to use | `0`
@@ -64,7 +64,7 @@ you can make temporary changes to these parameters like so
 
 `$ export BASHGPT_TEMPLATE=<TEMPLATE>`
 
-# templates
+# models
 
 | template | description | max tokens | notes |
 | --- | --- | --- | --- |
