@@ -1,4 +1,7 @@
 # bash-gpt (0.1.0)
+
+![bash-gpt](https://i.imgur.com/jZBMUif.gif)
+
 *bash-gpt* is a bash extension that rewrites a natural language command into an actual command when you press a keyboard shortcut
 
 # quick install
