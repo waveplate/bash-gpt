@@ -4,6 +4,8 @@
 
 *bash-gpt* is a bash extension that rewrites a natural language command into an actual command when you press a keyboard shortcut
 
+*bash-gpt* only depends on `sed`, `awk` and `curl`
+
 > *note: sorry! now fixed as of 2023/8/7 -- openai added whitespaces to their JSON which broke the regexp for parsing it*
 
 # quick install
